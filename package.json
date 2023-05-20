@@ -10,7 +10,10 @@
   "main": "dist/index.common.js",
   "module": "lib/index.ts",
   "types": "lib/index.ts",
-  "scripts": {},
+  "scripts": {
+    "dev": "vite",
+    "build": "rollup -c rollup.config.mjs"
+  },
   "keywords": [
     "apijson"
   ],
@@ -18,10 +21,15 @@
     "axios": "^1.4.0"
   },
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.2",
     "@types/lodash-es": "^4.17.7",
     "@vitejs/plugin-vue": "^4.2.3",
     "axios": "^1.4.0",
+    "esbuild": "^0.17.19",
     "rollup": "^3.22.0",
+    "rollup-plugin-esbuild": "^5.0.0",
+    "tsx": "^3.12.7",
+    "typescript": "^5.0.4",
     "vite": "^4.3.8",
     "vue": "^3.3.4"
   },
