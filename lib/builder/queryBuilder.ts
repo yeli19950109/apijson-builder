@@ -21,7 +21,7 @@ export class QueryBuilder {
     orders: Record<string, '+' | '-'>;
     associativeConditions: AssociativeCondition[] = [];
 
-    restUrl = '/get';
+    restUrl: string;
     http: AxiosInstance;
 
     getHttp() {
@@ -202,9 +202,13 @@ export class QueryBuilder {
         return json;
     }
 
+    getRestUrl() {
+        return this.restUrl ?? GlobalBuildConfig.queryRestUrl;
+    }
+
     send(): Promise<Record<string, any>> {
         return this.getHttp()
-            .post<any>(this.restUrl, this.toJson())
+            .post<any>(this.getRestUrl(), this.toJson())
             .then(({ data }): Promise<any> => {
                 if (data.ok) {
                     return data as any;

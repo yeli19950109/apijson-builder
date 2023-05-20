@@ -33,7 +33,7 @@ export class CrudBuilder {
         this.method = method;
         this.tag = table;
         if (restUrl) {
-            this.restUrl = restUrl;
+            this.restUrl = restUrl.endsWith('/') ? restUrl : restUrl + '/';
         }
         if (http) {
             this.http = http;
@@ -112,7 +112,11 @@ export class CrudBuilder {
         return json;
     }
 
-    restUrl = '/crud/';
+    restUrl: string;
+
+    getRestUrl() {
+        return this.restUrl ?? GlobalBuildConfig.crudRestUrl;
+    }
 
     send(): Promise<any> {
         const { method } = this;

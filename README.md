@@ -148,3 +148,36 @@ await CrudBuilder
     .id(id)
     .send();
 ```
+
+# 配置
+
+可以自定义http client,这样可以方便设置token和拦截器
+
+```typescript
+await QueryBuilder
+    .by({
+        table: 表名称,
+        http: axios.create(),
+        // 默认为/get
+        restUrl: '/api/json/get'
+    })
+    .page(0, 20)
+    .send();
+await CrudBuilder
+    .by({
+        table: 表名称,
+        method: 'delete',
+        http: axios.create(),
+        // 默认为/crud
+        restUrl: '/api/json/crud'
+    })
+    .id(id)
+    .send();
+```
+# 全局设置
+
+```typescript
+GlobalBuildConfig.setHttp(axios.create());
+GlobalBuildConfig.setQueryRestUrl('/api/json/get');
+GlobalBuildConfig.setCrudRestUrl('/api/json/crud');
+```
