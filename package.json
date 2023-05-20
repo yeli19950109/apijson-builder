@@ -8,7 +8,7 @@
   },
   "description": "能够比较方便的构建常用的ApiJson请求参数,并发起请求",
   "main": "dist/index.common.js",
-  "module": "lib/index.ts",
+  "module": "dist/index.esm.js",
   "types": "lib/index.ts",
   "scripts": {
     "dev": "vite",
