@@ -1,6 +1,6 @@
 {
   "name": "@aijs/apijson-builder",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "private": false,
   "publishConfig": {
     "access": "public",
@@ -40,5 +40,9 @@
   ],
   "dependencies": {
     "lodash-es": "^4.17.21"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yeli19950109/apijson-builder"
   }
 }
