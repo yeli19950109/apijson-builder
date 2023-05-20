@@ -114,6 +114,7 @@ await QueryBuilder
     .by({ table: 表名称 })
     .get(字段名1)
     .get(字段名2)
+    .page(0, 20)
     .send();
 // 或者
 await QueryBuilder
@@ -135,6 +136,12 @@ await CrudBuilder
 await CrudBuilder
     .delete(表名称)
     .id([id1, id2])
+    .send();
+// 或者批量删除
+await CrudBuilder
+    .delete(表名称)
+    .id(id1)
+    .id(id2)
     .send();
 await CrudBuilder
     .by({ table: 表名称, method: 'delete' })
