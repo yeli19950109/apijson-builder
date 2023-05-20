@@ -70,6 +70,21 @@ await QueryBuilder
     .send();
 ```
 
+## 排序
+
+```typescript
+await QueryBuilder
+    // 指定要查询的表
+    .by({ table: 表名称 })
+    // 降序desc
+    .order('create_time', true)
+    // 或者增序asc
+    .order('update_time', false)
+    // 带查询条件并分页返回,需要注意分页是从0开始
+    .page(0, 20)
+    .send();
+```
+
 ## 多个条件
 
 ```typescript
@@ -153,6 +168,16 @@ await CrudBuilder
 
 可以自定义http client,这样可以方便设置token和拦截器
 
+## 全局设置
+
+```typescript
+GlobalBuildConfig.setHttp(axios.create());
+GlobalBuildConfig.setQueryRestUrl('/api/json/get');
+GlobalBuildConfig.setCrudRestUrl('/api/json/crud');
+```
+
+## 单独配置
+
 ```typescript
 await QueryBuilder
     .by({
@@ -173,11 +198,4 @@ await CrudBuilder
     })
     .id(id)
     .send();
-```
-# 全局设置
-
-```typescript
-GlobalBuildConfig.setHttp(axios.create());
-GlobalBuildConfig.setQueryRestUrl('/api/json/get');
-GlobalBuildConfig.setCrudRestUrl('/api/json/crud');
 ```

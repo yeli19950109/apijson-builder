@@ -123,8 +123,9 @@ export class QueryBuilder {
     order(field: string, desc = true) {
         assert(!isEmpty(field) && isString(field), `参数field: ${field} 非法`);
         assert(isBoolean(desc), `参数desc: ${desc} 非法`);
-
-        this.orders = {};
+        if (!this.orders) {
+            this.orders = {};
+        }
         this.orders[field] = (desc ? '-' : '+');
         return this;
     }
