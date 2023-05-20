@@ -140,7 +140,32 @@ await QueryBuilder
     .send();
 ```
 
-## 根据id删除
+## 单表新增
+
+```typescript
+await CrudBuilder
+    .post(表名称)
+    .set(字段1, 值1)
+    .set(字段2, 值2)
+    .send();
+// 或者
+await CrudBuilder
+    .post(表名称)
+    .setData({
+        字段1: 值1,
+        字段2: 值2,
+    })
+    .send();
+await CrudBuilder
+    .by({ table: 表名称, method: 'post' })
+    .setData({
+        字段1: 值1,
+        字段2: 值2,
+    })
+    .send();
+```
+
+## 单表根据id删除
 
 ```typescript
 await CrudBuilder
@@ -163,7 +188,9 @@ await CrudBuilder
     .id(id)
     .send();
 ```
-## 根据id修改
+
+## 单表根据id修改
+
 ```typescript
 await CrudBuilder
     .put(表名称)
@@ -174,6 +201,15 @@ await CrudBuilder
 // 或者
 await CrudBuilder
     .put(表名称)
+    .id(id)
+    .setData({
+        字段1: 值1,
+        字段2: 值2,
+    })
+    .send();
+// 或者
+await CrudBuilder
+    .by({ table: 表名称, method: 'put' })
     .id(id)
     .setData({
         字段1: 值1,

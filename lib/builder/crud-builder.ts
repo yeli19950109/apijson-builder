@@ -95,7 +95,22 @@ export class CrudBuilder {
         const json: Record<string, any> = {};
         json[table] = {};
         assert(tag, `参数tag: ${tag}参数非法`);
-        assert(this.method === 'delete' && this.ids.length > 0, `delete需要根据主主键删除`);
+        if (this.method === 'delete') {
+            assert(this.method === 'delete' && this.ids.length > 0, `delete需要根据主主键删除`);
+        } else if (this.method === 'put') {
+            assert(
+                this.method === 'put'
+                && this.ids.length > 0
+                && Object.keys(this.data).length,
+                `put需要根据主主键删除,并且需要设置至少一个修改的字段`
+            );
+        } else if (this.method === 'post') {
+            assert(
+                this.method === 'post'
+                && Object.keys(this.data).length,
+                `post需要设置至少一个字段`
+            );
+        }
 
         reverseMerge(json[table], data);
 
