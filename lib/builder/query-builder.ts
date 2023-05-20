@@ -1,6 +1,6 @@
 import { isEmpty, isNumber, assert, reverseMerge } from './utils';
 import { Condition } from './condition';
-import { AssociativeCondition, AssociativeConditionParams } from './associativeCondition';
+import { AssociativeCondition, AssociativeConditionParams } from './associative-condition';
 import { GlobalBuildConfig } from '../client';
 import type { AxiosInstance } from 'axios';
 import { isBoolean, isString } from 'lodash-es';
