@@ -163,6 +163,24 @@ await CrudBuilder
     .id(id)
     .send();
 ```
+## 根据id修改
+```typescript
+await CrudBuilder
+    .put(表名称)
+    .id(id)
+    .set(字段1, 值1)
+    .set(字段2, 值2)
+    .send();
+// 或者
+await CrudBuilder
+    .put(表名称)
+    .id(id)
+    .setData({
+        字段1: 值1,
+        字段2: 值2,
+    })
+    .send();
+```
 
 # 配置
 

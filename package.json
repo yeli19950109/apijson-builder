@@ -1,10 +1,10 @@
 {
   "name": "@aijs/apijson-builder",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "publishConfig": {
     "access": "public",
-    "registry": ""
+    "registry": "https://registry.npmjs.org/"
   },
   "description": "能够比较方便的构建常用的ApiJson请求参数,并发起请求",
   "main": "dist/index.common.js",
