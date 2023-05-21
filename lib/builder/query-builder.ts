@@ -211,7 +211,12 @@ export class QueryBuilder {
 
         function associativeTableToJson(associativeConditions: AssociativeCondition[], json: Record<string, any>) {
             associativeConditions.forEach(c => {
-                reverseMerge(json, c.toJson());
+                const ac = c.toJson();
+                if (json['[]'] && ac['[]']) {
+                    json['[]:' + c.table] = ac['[]'];
+                } else {
+                    reverseMerge(json, ac);
+                }
             });
         }
 

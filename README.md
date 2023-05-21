@@ -223,6 +223,7 @@ await QueryBuilder
     .by({ table: 主表名称 })
     .debug(true)
     .condition(Condition.eq('id', 2))
+    // 可以接多个child以查询多张子表
     .child(AssociativeCondition.by({
         primaryKey: 主表字段,
         table: 子表名称,
@@ -246,6 +247,7 @@ await QueryBuilder
     .by({ table: 主表名称 })
     .debug(true)
     .condition(Condition.eq('id', 2))
+    // 可以接多个children以查询多张子表
     .children(AssociativeCondition.by({
         primaryKey: 主表字段,
         table: 子表名称,
@@ -261,6 +263,13 @@ const json = {
         'Test_a1': {
             'column1@': 'Test_a2/column1'
         }
+    },
+    // 多张一对多子表会使用别名
+    '[]:Test_a21': {
+        'Test_a21': {
+            'column1@': 'Test_a2/column1'
+        },
+        'count': 100
     },
     '@explain': true
 };
