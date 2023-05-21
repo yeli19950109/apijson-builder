@@ -60,12 +60,35 @@ export class QueryBuilder {
         return this;
     }
 
+    child(associativeCondition: AssociativeCondition) {
+        this.associativeConditions.push(
+            associativeCondition
+                .multi(false)
+                .setMain(this.table)
+        );
+        return this;
+    }
+
+    children(associativeCondition: AssociativeCondition) {
+        this.associativeConditions.push(
+            associativeCondition
+                .multi(true)
+                .setMain(this.table)
+        );
+        return this;
+    }
+
     /**
      * 设置关联条件
      */
     relate(conf: AssociativeConditionParams) {
         let { foreignKey } = conf;
-        if (!isEmpty(foreignKey) && !foreignKey.startsWith('/')) {
+        if (!isEmpty(foreignKey)
+            && (
+                !foreignKey.startsWith('/' + this.table + '/')
+                || !foreignKey.startsWith(this.table + '/')
+            )
+        ) {
             foreignKey = '/' + this.table + '/' + foreignKey;
         }
         this.associativeConditions.push(AssociativeCondition.by({ ...conf, foreignKey }));
@@ -153,7 +176,7 @@ export class QueryBuilder {
                     const json = c.toJson();
                     if (json !== null) {
                         tableJson[json.k] = json.v;
-                        if (json.c !== null) {
+                        if (json.c !== null && c.field !== 'id' && c.field !== 'userId') {
                             combine.push(json.c);
                         }
                     }

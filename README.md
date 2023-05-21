@@ -217,7 +217,54 @@ await CrudBuilder
     })
     .send();
 ```
-
+## 一对一
+```typescript
+await QueryBuilder
+    .by({ table: 主表名称 })
+    .debug(true)
+    .condition(Condition.eq('id', 2))
+    .child(AssociativeCondition.by({
+        primaryKey: 主表字段,
+        table: 子表名称,
+        foreignKey: 子表字段
+    }))
+    .send();
+// => 得到的json如下
+const json = {
+    'Test_a2': {
+        'id': 2
+    },
+    'Test_a1': {
+        'column1@': '/Test_a2/column1'
+    },
+    '@explain': true
+};
+```
+## 一对多
+```typescript
+await QueryBuilder
+    .by({ table: 主表名称 })
+    .debug(true)
+    .condition(Condition.eq('id', 2))
+    .children(AssociativeCondition.by({
+        primaryKey: 主表字段,
+        table: 子表名称,
+        foreignKey: 子表字段
+    }))
+    .send();
+// => 得到的json如下
+const json = {
+    'Test_a2': {
+        'id': 2
+    },
+    '[]': {
+        'Test_a1': {
+            'column1@': 'Test_a2/column1'
+        }
+    },
+    '@explain': true
+};
+```
 # 配置
 
 可以自定义http client,这样可以方便设置token和拦截器

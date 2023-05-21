@@ -1,4 +1,5 @@
 import { isEmpty, isString, assert } from './utils';
+import { isBoolean } from 'lodash-es';
 
 export type AssociativeConditionParams = {
     // 关联的主表表名
@@ -14,26 +15,22 @@ export type AssociativeConditionParams = {
 /**
  * 关联条件构建
  */
-export  class AssociativeCondition {
+export class AssociativeCondition {
     table: string;
     primaryKey: string;
     foreignKey: string;
     resFields: string;
-
-    associateTables: Array<{
-        table: string,
-        resFields: string
-    }> = [];
 
     static by(conf: AssociativeConditionParams) {
         return new AssociativeCondition(conf);
     }
 
     constructor(conf: AssociativeConditionParams) {
-        const { table, primaryKey, foreignKey, resFields = '*' } = conf;
-        assert(!isEmpty(table) && isString(table), `[ApiJson] 参数table: ${table} 非法`);
-        assert(!isEmpty(primaryKey) && isString(primaryKey), `[ApiJson] 参数primaryKey: ${primaryKey} 非法, 必须是当前主表的主键`);
-        assert(!isEmpty(foreignKey) && isString(foreignKey), `[ApiJson] 参数foreignField: ${foreignKey} 非法, 必须是关联表的外键字段`);
+        const { table, primaryKey, resFields = '*' } = conf;
+        let { foreignKey } = conf;
+        assert(!isEmpty(table) && isString(table), `参数table: ${table} 非法`);
+        assert(!isEmpty(primaryKey) && isString(primaryKey), `参数primaryKey: ${primaryKey} 非法, 必须是当前主表的主键`);
+        assert(!isEmpty(foreignKey) && isString(foreignKey), `参数foreignField: ${foreignKey} 非法, 必须是关联表的外键字段`);
         this.table = table;
         this.primaryKey = primaryKey;
         this.foreignKey = foreignKey;
@@ -42,11 +39,28 @@ export  class AssociativeCondition {
         }
     }
 
-    associated(table: string, resFields: string) {
-        this.associateTables.push({ // TODO 可以转为类型变量
-            table: table,
-            resFields: resFields,
-        });
+    multiple = false;
+    pagination: { page: number, count: number };
+
+    mainTable: string;
+
+    setMain(table: string) {
+        this.mainTable = table;
+        return this;
+    }
+
+    multi(multi: boolean) {
+        if (isBoolean(multi)) {
+            this.multiple = multi;
+        } else {
+            const count = parseInt(multi + '');
+            assert(isFinite(count), 'multi得是Boolean 或者 Number');
+            this.multiple = true;
+            this.pagination = {
+                page: 0,
+                count: count,
+            };
+        }
         return this;
     }
 
@@ -56,22 +70,29 @@ export  class AssociativeCondition {
         const {
             table,
             primaryKey,
-            foreignKey,
             resFields,
-            associateTables,
         } = this;
+        let { foreignKey, } = this;
+        if (!isEmpty(foreignKey)
+            && (
+                !foreignKey.startsWith('/' + this.mainTable + '/')
+                || !foreignKey.startsWith(this.mainTable + '/')
+            )
+        ) {
+            foreignKey = (this.multiple ? '' : '/') + this.mainTable + '/' + foreignKey;
+        }
         // 处理关联表
         tableJson[primaryKey + '@'] = foreignKey;
-        tableJson['@column'] = resFields;
-        json[table] = tableJson;
-
-        // 处理关联目标表
-        associateTables.forEach(t => {
-            json[t.table] = {
-                '@column': t.resFields,
+        if (resFields) {
+            tableJson['@column'] = resFields;
+        }
+        if (this.multiple) {
+            json['[]'] = {
+                [table]: tableJson
             };
-        });
-
+        } else {
+            json[table] = tableJson;
+        }
         return json;
     }
 }
