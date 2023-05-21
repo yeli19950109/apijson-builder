@@ -60,21 +60,29 @@ export class QueryBuilder {
         return this;
     }
 
-    child(associativeCondition: AssociativeCondition) {
-        this.associativeConditions.push(
-            associativeCondition
-                .multi(false)
-                .setMain(this.table)
-        );
+    child(query: AssociativeCondition | QueryBuilder) {
+        if (query instanceof AssociativeCondition) {
+            this.associativeConditions.push(
+                query
+                    .multi(false)
+                    .setMain(this.table)
+            );
+        } else if (query instanceof QueryBuilder) {
+
+        }
         return this;
     }
 
-    children(associativeCondition: AssociativeCondition) {
-        this.associativeConditions.push(
-            associativeCondition
-                .multi(true)
-                .setMain(this.table)
-        );
+    children(query: AssociativeCondition | QueryBuilder) {
+        if (query instanceof AssociativeCondition) {
+            this.associativeConditions.push(
+                query
+                    .multi(true)
+                    .setMain(this.table)
+            );
+        } else if (query instanceof QueryBuilder) {
+
+        }
         return this;
     }
 
