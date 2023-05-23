@@ -122,7 +122,7 @@ await QueryBuilder
 
 ## 获取指定字段
 
-默认获取所有字段
+不指定字段默认*获取所有字段,如果指定字段默认会附加id
 
 ```typescript
 await QueryBuilder
@@ -217,7 +217,9 @@ await CrudBuilder
     })
     .send();
 ```
+
 ## 一对一
+
 ```typescript
 await QueryBuilder
     .by({ table: 主表名称 })
@@ -230,6 +232,18 @@ await QueryBuilder
         foreignKey: 子表字段
     }))
     .send();
+// 或者
+await QueryBuilder
+    .by({ table: 主表名称 })
+    .debug(true)
+    .condition(Condition.eq('id', 2))
+    // 可以接多个child以查询多张子表
+    .child(
+        AssociativeCondition
+            .table(子表名称)
+            .link(主表字段, 子表字段)
+    )
+    .send();
 // => 得到的json如下
 const json = {
     'Test_a2': {
@@ -241,7 +255,9 @@ const json = {
     '@explain': true
 };
 ```
+
 ## 一对多
+
 ```typescript
 await QueryBuilder
     .by({ table: 主表名称 })
@@ -253,6 +269,18 @@ await QueryBuilder
         table: 子表名称,
         foreignKey: 子表字段
     }))
+    .send();
+// 或者
+await QueryBuilder
+    .by({ table: 主表名称 })
+    .debug(true)
+    .condition(Condition.eq('id', 2))
+    // 可以接多个children以查询多张子表
+    .children(
+        AssociativeCondition
+            .table(子表名称)
+            .link(主表字段, 子表字段)
+    )
     .send();
 // => 得到的json如下
 const json = {
@@ -274,6 +302,26 @@ const json = {
     '@explain': true
 };
 ```
+
+## 一对一,一对多指定查询字段
+
+不指定字段默认*,如果指定字段默认会附加id
+
+```typescript
+await QueryBuilder
+    .by({ table: 主表名称 })
+    .debug(true)
+    .condition(Condition.eq('id', 2))
+    // 可以接多个children以查询多张子表
+    .children(
+        AssociativeCondition
+            .table(子表名称)
+            .link(主表字段, 子表字段)
+            .get([字段1, 字段2])
+    )
+    .send();
+```
+
 # 配置
 
 可以自定义http client,这样可以方便设置token和拦截器

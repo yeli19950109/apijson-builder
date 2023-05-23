@@ -1,4 +1,4 @@
-import { isEmpty, isNumber, assert, reverseMerge } from './utils';
+import { isEmpty, isNumber, assert, reverseMerge, isArray } from './utils';
 import { Condition } from './condition';
 import { AssociativeCondition, AssociativeConditionParams } from './associative-condition';
 import { GlobalBuildConfig } from '../client';
@@ -120,7 +120,6 @@ export class QueryBuilder {
         return this;
     }
 
-
     multi(multi: boolean | number = false) {
         if (isBoolean(multi)) {
             this.multiple = multi;
@@ -190,12 +189,14 @@ export class QueryBuilder {
                     }
                 });
             }
-            if (fields && fields.length) {
+            if (isArray(fields) && !isEmpty(fields)) {
                 if (!fields.includes('*')) {
                     // id内置
                     tableJson['@column'] = [...new Set(fields), 'id']
                         .map(it => it.trim())
                         .join(',');
+                } else {
+                    tableJson['@column'] = '*';
                 }
             }
             if (orders) {
