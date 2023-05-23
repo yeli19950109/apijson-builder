@@ -354,7 +354,7 @@ await QueryBuilder
     .join(
         AssociativeCondition
             .table(关联表)
-            .leftJoin(主表字段, 关联主表字段)
+            .leftJoin(主表主键, 关联主表字段)
     )
     // 可以2个join,比如使用单独的关联表实现多对多
     // 第一个join是关联表,然后第二个join通过setMain关联到第一个join
@@ -362,7 +362,7 @@ await QueryBuilder
         AssociativeCondition
             .table(子表名称)
             .setMain(关联表)
-            .leftJoin(关联子表名称, 子表字段)
+            .leftJoin(关联子表字段, 子表主键)
             .get([字段1, 字段2])
     )
     .page(0, 10)
