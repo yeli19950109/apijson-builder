@@ -62,11 +62,11 @@ export class QueryBuilder {
 
     child(query: AssociativeCondition | QueryBuilder) {
         if (query instanceof AssociativeCondition) {
-            this.associativeConditions.push(
-                query
-                    .multi(false)
-                    .setMain(this.table)
-            );
+            query.multi(false);
+            if (!query.mainTable) {
+                query.setMain(this.table);
+            }
+            this.associativeConditions.push(query);
         } else if (query instanceof QueryBuilder) {
 
         }
@@ -75,31 +75,14 @@ export class QueryBuilder {
 
     children(query: AssociativeCondition | QueryBuilder) {
         if (query instanceof AssociativeCondition) {
-            this.associativeConditions.push(
-                query
-                    .multi(true)
-                    .setMain(this.table)
-            );
+            query.multi(true);
+            if (!query.mainTable) {
+                query.setMain(this.table);
+            }
+            this.associativeConditions.push(query);
         } else if (query instanceof QueryBuilder) {
 
         }
-        return this;
-    }
-
-    /**
-     * 设置关联条件
-     */
-    relate(conf: AssociativeConditionParams) {
-        let { foreignKey } = conf;
-        if (!isEmpty(foreignKey)
-            && (
-                !foreignKey.startsWith('/' + this.table + '/')
-                || !foreignKey.startsWith(this.table + '/')
-            )
-        ) {
-            foreignKey = '/' + this.table + '/' + foreignKey;
-        }
-        this.associativeConditions.push(AssociativeCondition.by({ ...conf, foreignKey }));
         return this;
     }
 
@@ -160,6 +143,19 @@ export class QueryBuilder {
         return this;
     }
 
+    join(query: AssociativeCondition) {
+        if (query instanceof AssociativeCondition) {
+            assert(query.isJoin(), 'AssociativeCondition需要正确设置join');
+            query.multi(false);
+            if (!query.mainTable) {
+                query.setMain(this.table);
+            }
+            this.associativeConditions.push(query);
+        }
+        this.multiple = true;
+        return this;
+    }
+
     toJson() {
         let json: Record<string, any> = {};
         const {
@@ -211,6 +207,7 @@ export class QueryBuilder {
         }
 
         function associativeTableToJson(associativeConditions: AssociativeCondition[], json: Record<string, any>) {
+            const joinArr: string[] = [];
             associativeConditions.forEach(c => {
                 const ac = c.toJson();
                 if (json['[]'] && ac['[]']) {
@@ -218,10 +215,16 @@ export class QueryBuilder {
                 } else {
                     reverseMerge(json, ac);
                 }
+                if (c.isJoin()) {
+                    joinArr.push(c.joinType + c.toForeignKey());
+                }
             });
+            if (joinArr.length) {
+                json.join = joinArr.join(',');
+            }
         }
 
-        if (multiple) {
+        if (multiple || associativeConditions.some(it => it.isJoin())) {
             json['[]'] = tableToJson(table, conditions, fields, orders);
             associativeTableToJson(associativeConditions, json['[]']);
             if (pagination) {

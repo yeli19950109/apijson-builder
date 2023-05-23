@@ -243,6 +243,11 @@ await QueryBuilder
             .table(子表名称)
             .link(主表字段, 子表字段)
     )
+    .child(
+        AssociativeCondition
+            .table(子表名称2)
+            .link(主表字段2, 子表字段2)
+    )
     .send();
 // => 得到的json如下
 const json = {
@@ -280,6 +285,11 @@ await QueryBuilder
         AssociativeCondition
             .table(子表名称)
             .link(主表字段, 子表字段)
+    )
+    .children(
+        AssociativeCondition
+            .table(子表名称2)
+            .link(主表字段2, 子表字段2)
     )
     .send();
 // => 得到的json如下
@@ -321,7 +331,43 @@ await QueryBuilder
     )
     .send();
 ```
-
+## join连表
+注意join连表即使不.page(0,10)也一定是查询多条数据结果
+```typescript
+await QueryBuilder
+    .by({ table: 主表名称 })
+    .debug(true)
+    .condition(Condition.eq('id', 2))
+    .join(
+        AssociativeCondition
+            .table(子表名称)
+            .leftJoin(主表字段, 子表字段)
+            .get([字段1, 字段2])
+    )
+    .page(0, 10)
+    .send();
+// 使用关联表
+await QueryBuilder
+    .by({ table: 主表名称 })
+    .debug(true)
+    .condition(Condition.eq('id', 2))
+    .join(
+        AssociativeCondition
+            .table(关联表)
+            .leftJoin(主表字段, 关联主表字段)
+    )
+    // 可以2个join,比如使用单独的关联表实现多对多
+    // 第一个join是关联表,然后第二个join通过setMain关联到第一个join
+    .join(
+        AssociativeCondition
+            .table(子表名称)
+            .setMain(关联表)
+            .leftJoin(关联子表名称, 子表字段)
+            .get([字段1, 字段2])
+    )
+    .page(0, 10)
+    .send();
+```
 # 配置
 
 可以自定义http client,这样可以方便设置token和拦截器

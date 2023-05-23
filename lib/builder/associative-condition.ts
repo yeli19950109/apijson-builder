@@ -1,4 +1,4 @@
-import { isEmpty, isString, assert, isArray } from './utils';
+import { assert, isArray, isEmpty, isString } from './utils';
 import { isBoolean } from 'lodash-es';
 
 export type AssociativeConditionParams = {
@@ -79,20 +79,54 @@ export class AssociativeCondition {
         return this;
     }
 
-    toJson() {
-        const json: Record<string, any> = {};
-        const tableJson: Record<string, any> = {};
-        const {
-            table,
-            primaryKey,
-            fields,
-        } = this;
+    private _isJoin = false;
+
+    isJoin() {
+        return this._isJoin;
+    }
+
+    joinType: string;
+
+    leftJoin(primaryKey: string, foreignKey: string) {
+        this.joinType = '<';
+        this._isJoin = true;
+        return this.link(primaryKey, foreignKey);
+    }
+
+    rightJoin(primaryKey: string, foreignKey: string) {
+        this.joinType = '>';
+        this._isJoin = true;
+        return this.link(primaryKey, foreignKey);
+    }
+
+
+    innerJoin(primaryKey: string, foreignKey: string) {
+        this.joinType = '&';
+        this._isJoin = true;
+        return this.link(primaryKey, foreignKey);
+    }
+
+    fullJoin(primaryKey: string, foreignKey: string) {
+        this.joinType = '|';
+        this._isJoin = true;
+        return this.link(primaryKey, foreignKey);
+    }
+
+    outerJoin(primaryKey: string, foreignKey: string) {
+        this.joinType = '!';
+        this._isJoin = true;
+        return this.link(primaryKey, foreignKey);
+    }
+
+    appJoin(primaryKey: string, foreignKey: string) {
+        this.joinType = '@';
+        this._isJoin = true;
+        return this.link(primaryKey, foreignKey);
+    }
+
+    toForeignKey() {
         let { foreignKey, } = this;
-
-        assert(!isEmpty(table) && isString(table), `参数table: ${table} 非法`);
-        assert(!isEmpty(primaryKey) && isString(primaryKey), `参数primaryKey: ${primaryKey} 非法, 必须是当前主表的主键`);
         assert(!isEmpty(foreignKey) && isString(foreignKey), `参数foreignField: ${foreignKey} 非法, 必须是关联表的外键字段`);
-
         if (!isEmpty(foreignKey)
             && (
                 !foreignKey.startsWith('/' + this.mainTable + '/')
@@ -101,8 +135,21 @@ export class AssociativeCondition {
         ) {
             foreignKey = (this.multiple ? '' : '/') + this.mainTable + '/' + foreignKey;
         }
+        return foreignKey;
+    }
+
+    toJson() {
+        const json: Record<string, any> = {};
+        const tableJson: Record<string, any> = {};
+        const {
+            table,
+            primaryKey,
+            fields,
+        } = this;
+        assert(!isEmpty(table) && isString(table), `参数table: ${table} 非法`);
+        assert(!isEmpty(primaryKey) && isString(primaryKey), `参数primaryKey: ${primaryKey} 非法, 必须是当前主表的主键`);
         // 处理关联表
-        tableJson[primaryKey + '@'] = foreignKey;
+        tableJson[primaryKey + '@'] = this.toForeignKey();
         if (isArray(fields) && !isEmpty(fields)) {
             if (!fields.includes('*')) {
                 // id内置
