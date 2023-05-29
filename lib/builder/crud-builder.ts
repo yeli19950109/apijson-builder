@@ -136,7 +136,7 @@ export class CrudBuilder {
     send(): Promise<any> {
         const { method } = this;
         return this.getHttp()
-            .post<any>(`${this.restUrl}${method}`, this.toJson())
+            .post<any>(`${this.getRestUrl()}${method}`, this.toJson())
             .then(({ data }): Promise<any> => {
                 if (data?.ok) {
                     return data as any;
