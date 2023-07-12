@@ -7,12 +7,21 @@ export default defineConfig({
     output: [
         {
             file: 'dist/index.common.js',
-            format: 'commonjs'
+            format: 'commonjs',
         },
         {
             file: 'dist/index.esm.js',
-            format: 'esm'
-        }
+            format: 'esm',
+        },
+        {
+            file: 'dist/index.umd.js',
+            format: 'umd',
+            name: 'AijsApiJsonBuilder',
+            globals: {
+                'lodash-es': '_',
+                'axios': 'axios',
+            },
+        },
     ],
     plugins: [
         nodeResolve(),
@@ -26,10 +35,10 @@ export default defineConfig({
                 // require @rollup/plugin-commonjs
                 '.json': 'json',
             },
-        })
+        }),
     ],
     external: [
         'axios',
-        'lodash-es'
-    ]
+        'lodash-es',
+    ],
 });
