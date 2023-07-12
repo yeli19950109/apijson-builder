@@ -1,21 +1,34 @@
 import axios, { AxiosInstance } from 'axios';
 
-export class GlobalBuildConfig {
-    static http = axios.create();
-    static queryRestUrl = '/get';
-    static crudRestUrl = '/crud/';
+export class BuildConfig {
+    http = axios.create();
+    queryRestUrl = '/get';
+    crudRestUrl = '/crud/';
 
-    static setHttp(http: AxiosInstance) {
+    setHttp(http: AxiosInstance) {
         this.http = http;
-        return GlobalBuildConfig;
+        return this;
     }
 
-    static setQueryRestUrl(url: string) {
+    setQueryRestUrl(url: string) {
         this.queryRestUrl = url;
+        return this;
     }
 
-    static setCrudRestUrl(url: string) {
+    setCrudRestUrl(url: string) {
         this.crudRestUrl = url.endsWith('/') ? url : url + '/';
+        return this;
     }
 }
 
+const g: any = typeof globalThis === 'object'
+    ? globalThis
+    : typeof window === 'object'
+        ? window
+        : {};
+
+if (!g.$$ApiJsonBuilder) {
+    g.$$ApiJsonBuilder = new BuildConfig();
+}
+
+export const GlobalBuildConfig = g.$$ApiJsonBuilder;
