@@ -180,7 +180,11 @@ export class QueryBuilder {
                     if (json !== null) {
                         tableJson[json.k] = json.v;
                         if (json.c !== null && c.field !== 'id' && c.field !== 'userId') {
-                            combine.push(json.c);
+                            if (conditions.length > 1) {
+                                combine.push(json.c);
+                            } else {
+                                combine.push(json.k);
+                            }
                         }
                     }
                 });
