@@ -241,9 +241,7 @@ export class QueryBuilder {
             json = tableToJson(table, conditions, fields, orders);
             associativeTableToJson(associativeConditions, json);
         }
-        if (this.explain) {
-            json['@explain'] = true;
-        }
+        json['@explain'] = this.explain;
         return json;
     }
 
